@@ -1,38 +1,142 @@
-.App {
+body {
+  background-color: #e6e8f5;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h1 {
+  color: #000;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.outerArea {
+  width: 100%;
+  align-items: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
+.headerSection
+{
+  /*background-color: #e9ecef;*/
+  color: #8b8b8b;
+  width: 100%;
+}
+
+.App {
+  display: inline-block;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin: 2em;
+  white-space: pre;
+
+
+
+  font-size: 18px;
+  /*font-family: "Courier New", monospace;*/
 }
 
-.App-link {
-  color: #61dafb;
+.gameOptions {
+  padding-top: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.columnSection {
+  flex-direction: row;
+  width: 100%;
 }
+
+.upperHalf {
+  width: fit-content;
+}
+
+.metrics {
+  padding-top: 30px;
+  text-align: left;
+}
+
+.footer {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   width: 100%;
+   height: 50px;
+   text-align: center;
+   color: #afafaf;
+   font-size: 14px;
+}
+
+button {
+  border-radius: 6px;
+}
+
+input {
+  border-radius: 6px;
+}
+
+button:hover {
+  /*background-color: rgb(255, 235, 59);*/
+}
+
+button:active {
+  /*background-color: rgb(255, 244, 142);*/
+}
+
+.numberInput {
+  width: 50px;
+  /*font-size: 1.5em;*/
+  margin-top: 1em;
+  margin-bottom: 1em;
+  /*border: 1px solid grey*/
+  padding: 5px;
+}
+
+.resultsArea {
+  font-size: 24px;
+}
+
+.resultYes {
+  color: #00ff00;
+}
+
+.resultNo {
+  color: #000000;
+}
+
+.resultError {
+  color: #ff0000;
+}
+
+details {
+  outline: none;
+  /*background-color: #e9ecef;*/
+  /*width: fit-content;*/
+
+}
+
+summary {
+  outline: none;
+}
+
+i {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
