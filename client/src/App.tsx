@@ -17,7 +17,9 @@ export class AppMachine
   @observable public margin: string | null = this.DEFAULT_MARGIN;
   @observable public percentage: string | null = this.DEFAULT_PERCENTAGE;
   @observable public maxWinDifferential: string | null = this.DEFAULT_WIN_DIFF;
-  @observable public date: string = ""; //TODO
+  @observable public date: string = "";
+  @observable public hatTrickHome: boolean = false;
+  @observable public hatTrickAway: boolean = false;
 
   LOCAL = false;
 
@@ -339,8 +341,12 @@ class App extends React.Component<AppProps>
     const differential = this.machine.margin;
     const randomPercent = this.machine.percentage;
     const maxWinDifferential = this.machine.maxWinDifferential;
+    const hatTrickHome = this.machine.hatTrickHome;
+    const hatTrickAway = this.machine.hatTrickAway;
 
-    const response = await this.postRequest(url, {differential: differential, randomPercent: randomPercent, maxWinDifferential: maxWinDifferential});
+    const response = await this.postRequest(url, 
+      {differential: differential, randomPercent: randomPercent, maxWinDifferential: maxWinDifferential,
+      hatTrickHome: hatTrickHome, hatTrickAway: hatTrickAway});
 
     if (response.error)
     {
@@ -406,6 +412,16 @@ class App extends React.Component<AppProps>
     this.machine.date = e.currentTarget.value;
   }
 
+  @action
+  onHatTrickHomeChange = (e: React.FormEvent<HTMLInputElement>) => {
+    this.machine.hatTrickHome = e.currentTarget.checked;
+  }
+
+  @action
+  onHatTrickAwayChange = (e: React.FormEvent<HTMLInputElement>) => {
+    this.machine.hatTrickAway = e.currentTarget.checked;
+  }
+
   private renderTeamDropdown(): JSX.Element
   {
     return <>
@@ -446,7 +462,7 @@ class App extends React.Component<AppProps>
     </>;
   }
 
-  private renderNumberInput(id: string, value: string | null, label: string, tooltip: string,
+  private renderNumberMetric(id: string, value: string | null, label: string, tooltip: string,
     onChange: (e: React.FormEvent<HTMLInputElement>) => void): JSX.Element
   {
     return <>
@@ -463,6 +479,29 @@ class App extends React.Component<AppProps>
         className="numberInput"
         value={value == null ? "" : value} 
         onChange={onChange}
+      />
+    </>;
+  }
+
+  private renderHatTrickMetric(): JSX.Element
+  {
+    return <>
+      Hat Trick:
+      <label>Home Team:</label>
+      &nbsp;
+      <input 
+        type="checkbox" 
+        id={"hatTrickMetric_home"} 
+        checked={this.machine.hatTrickHome} 
+        onChange={this.onHatTrickHomeChange}
+      />
+      <label>Away Team:</label>
+      &nbsp;
+      <input 
+        type="checkbox" 
+        id={"hatTrickMetric_home"} 
+        checked={this.machine.hatTrickAway} 
+        onChange={this.onHatTrickAwayChange}
       />
     </>;
   }
@@ -508,23 +547,25 @@ class App extends React.Component<AppProps>
             <div className="columnSection metrics">
               <details>
                 <summary>Adjust Metrics</summary>
-                {this.renderNumberInput("marginInp", 
+                {this.renderNumberMetric("marginInp", 
                   this.machine.margin,
                   "Losing Margin:",
                   "Number of goals your team can lose by and still return YES", 
                   this.onMarginChange)}
                 <br/>
-                {this.renderNumberInput("maxWinDifferential", 
+                {this.renderNumberMetric("maxWinDifferential", 
                   this.machine.maxWinDifferential, 
                   "Max Win Differential:",
                   "Number of goals your team can win by and still return YES",
                   this.onMaxWinChange)}
                 <br/>
-                {this.renderNumberInput("randomPercent",
+                {this.renderNumberMetric("randomPercent",
                   this.machine.percentage,
                   "Random Percentage:",
                   "The probability of returning YES when it would otherwise return NO",
                   this.onPercentChange)}
+                <br/>
+                {this.renderHatTrickMetric()}
                </details>
             </div>
             <div className="footer">
@@ -550,7 +591,6 @@ export default App;
 Metric ideas:
   -overtime (if losing margin is 0)
   -first career goal (your team / either team)
-  -hat trick (your team / either team)
   -fight (player / anyone)
   -goalie goal (your team / either team)
 */

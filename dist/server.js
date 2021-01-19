@@ -34,7 +34,9 @@ app.post('/api/worthWatching/:teamId/:date', (req, res) => __awaiter(void 0, voi
     const losingMargin = req.body.differential;
     const randomPercent = req.body.randomPercent;
     const maxWinDifferential = req.body.maxWinDifferential;
-    const result = yield metrics_1.getResults(YOUR_TEAM_ID, date, losingMargin, randomPercent, maxWinDifferential);
+    const hatTrickHome = req.body.hatTrickHome;
+    const hatTrickAway = req.body.hatTrickAway;
+    const result = yield metrics_1.getResults(YOUR_TEAM_ID, date, losingMargin, randomPercent, maxWinDifferential, hatTrickHome, hatTrickAway);
     res.json(result);
 }));
 /*

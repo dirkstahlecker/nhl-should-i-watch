@@ -47,11 +47,11 @@ export class Metric
     {
       result = true;
 
-      if (maxWinMargin != null) //need to check max win
+      if (maxWinMargin != null) // need to check max win
       {
         if (scoreDiff > maxWinMargin)
         {
-          result = false; //not within the margin, so make it false
+          result = false; // not within the margin, so make it false
         }
       }
     }
@@ -60,7 +60,7 @@ export class Metric
       result = true;
     }
 
-    console.log(`losing margin metric: ${result}`);
+    console.log(`basic score metric: ${result}`);
     return new Metric(result, this.yourTeamScore, this.opponentScore);
   }
 
@@ -93,16 +93,16 @@ export class Metric
     *  -Someone on your team gets a hat trick (if onlyYourTeam = true)
     *  -Someone on either team gets a hat trick (if onlyYourTeam = false)
     */
-  public applyHatTrickMetric(onlyYourTeam: boolean, homeHatTrick: boolean, awayHatTrick: boolean): Metric
+  public applyHatTrickMetric(home: boolean, away: boolean, homeHatTrick: boolean, awayHatTrick: boolean): Metric
   {
     let result: boolean = this.worthWatching;
-    if (onlyYourTeam)
+    if (home)
     {
-      result = homeHatTrick;
+      result = result || homeHatTrick;
     }
-    else
+    if (away)
     {
-      result = homeHatTrick || awayHatTrick;
+      result = result || awayHatTrick;
     }
 
     console.log(`hat trick metric: ${result}`);
@@ -182,7 +182,8 @@ function getHatTricks(team: any)
 
 // return json
 export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargin: number,
-  randomPercent: number, maxWinDifferential: number): Promise<ResultObj>
+  randomPercent: number, maxWinDifferential: number, hatTrickHome: boolean, 
+  hatTrickAway: boolean): Promise<ResultObj>
 {
   try
   {
@@ -249,13 +250,16 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
 
     // const worthWatching = worthIt1(yourTeamScore, opponentScore);
 
-    const worthWatching: boolean = new Metric(false, yourTeamScore, opponentScore)
+    let worthWatching: Metric = new Metric(false, yourTeamScore, opponentScore)
       .applyBasicScoreMetric(losingMargin, maxWinDifferential)
-      .applyRandomPercentageMetric(randomPercent)
-      .applyHatTrickMetric(false, homeHatTricks, awayHatTricks) //TODO: onlyYourTeam
-      .worthWatching;
+      .applyRandomPercentageMetric(randomPercent);
 
-    return {worthWatching, error: null};
+    if (hatTrickHome || hatTrickAway)
+    {
+      worthWatching = worthWatching.applyHatTrickMetric(hatTrickHome, hatTrickAway, homeHatTricks, awayHatTricks);
+    }
+
+    return {worthWatching: worthWatching.worthWatching, error: null};
   }
   catch (err)
   {

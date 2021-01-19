@@ -28,8 +28,11 @@ app.post('/api/worthWatching/:teamId/:date', async (req, res) => {
   const losingMargin = req.body.differential;
   const randomPercent = req.body.randomPercent;
   const maxWinDifferential = req.body.maxWinDifferential;
+  const hatTrickHome = req.body.hatTrickHome;
+  const hatTrickAway = req.body.hatTrickAway;
 
-  const result = await getResults(YOUR_TEAM_ID, date, losingMargin, randomPercent, maxWinDifferential);
+  const result = await getResults(YOUR_TEAM_ID, date, losingMargin, randomPercent, maxWinDifferential,
+    hatTrickHome, hatTrickAway);
 
   res.json(result);
 })
