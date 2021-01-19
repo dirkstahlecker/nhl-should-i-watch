@@ -14,9 +14,9 @@ export class AppMachine
   @observable public error: any = null;
   @observable public worthWatching: boolean | null = null;
   @observable public selectedTeam: number = teams.BRUINS;
-  @observable public margin: string = this.DEFAULT_MARGIN;
-  @observable public percentage: string = this.DEFAULT_PERCENTAGE;
-  @observable public maxWinDifferential: string = this.DEFAULT_WIN_DIFF;
+  @observable public margin: string | null = this.DEFAULT_MARGIN;
+  @observable public percentage: string | null = this.DEFAULT_PERCENTAGE;
+  @observable public maxWinDifferential: string | null = this.DEFAULT_WIN_DIFF;
   @observable public date: string = ""; //TODO
 
   LOCAL = false;
@@ -328,11 +328,9 @@ class App extends React.Component<AppProps>
     
     // var absolute_path = __dirname;
 
-    const metric = 1;
-
     //TODO
     // const urlPrefix = this.machine.LOCAL ? "http:\//localhost:5000" : "https:\//nhl-should-i-watch.herokuapp.com"; //TODO:
-    var url = "/api/worthWatching/" + teamId + "/" + dateStr + "/" + metric;
+    var url = "/api/worthWatching/" + teamId + "/" + dateStr;
     console.log("fetching url " + url);
 
     // const differential = document.getElementById("marginInp").value;
@@ -405,7 +403,7 @@ class App extends React.Component<AppProps>
 
   @action
   onDateChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const date = e.currentTarget.value;
+    this.machine.date = e.currentTarget.value;
   }
 
   private renderTeamDropdown(): JSX.Element
@@ -458,6 +456,7 @@ class App extends React.Component<AppProps>
       >
         {label}
       </label>
+      &nbsp;
       <input 
         type="number"
         id={id}
@@ -514,23 +513,19 @@ class App extends React.Component<AppProps>
                   "Losing Margin:",
                   "Number of goals your team can lose by and still return YES", 
                   this.onMarginChange)}
-                &nbsp;
+                <br/>
                 {this.renderNumberInput("maxWinDifferential", 
                   this.machine.maxWinDifferential, 
-                  "Number of goals your team can win by and still return YES",
                   "Max Win Differential:",
+                  "Number of goals your team can win by and still return YES",
                   this.onMaxWinChange)}
-                {/* <label htmlFor="maxWinDifferential" title="Number of goals your team can win by and still return YES"> </label>
-                <input type="number" id="maxWinDifferential" className="numberInput" value={this.machine.maxWinDifferential} onChange={this.onMaxWinChange}/> */}
-                &nbsp;
+                <br/>
                 {this.renderNumberInput("randomPercent",
                   this.machine.percentage,
-                  "The probability of returning YES when it would otherwise return NO",
                   "Random Percentage:",
+                  "The probability of returning YES when it would otherwise return NO",
                   this.onPercentChange)}
-                {/* <label htmlFor="randomPercent" title="The probability of returning YES when it would otherwise return NO">Random Percentage: </label>
-                <input type="number" id="randomPercent" className="numberInput" value={this.machine.percentage} onChange={this.onPercentChange}/> */}
-              </details>
+               </details>
             </div>
             <div className="footer">
               Questions or feedback? Email nhlshouldiwatchapp@gmail.com
@@ -543,3 +538,18 @@ class App extends React.Component<AppProps>
 }
 
 export default App;
+
+//TODO: when changing team selection, remove previous results
+//implement check for games in progress (?)
+//expanding metrics moves the carat around on the screen
+//does everything work with 0? 
+//error handling for invalid number / negative numbers
+
+
+/*
+Metric ideas:
+  -overtime (if losing margin is 0)
+  -first career goal (your team / either team)
+  -hat trick (your team / either team)
+  -fight (player / anyone)
+*/
