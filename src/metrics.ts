@@ -19,7 +19,7 @@ export class Metric
   // apply____Metric functions take in whether it's currently worth watching and the two scores.
   // Returns the new value of worth watching as a new Metric for chaining
   // Should be standalone and independent of order.
-  // Never set worthWatching to false. Either set it to true or return what it was.
+  // Usually either set worthWatching to true or return what it was. Only set to false if standalone
 
   /**
    * Return YES if:
@@ -28,6 +28,12 @@ export class Metric
    */
   public applyLosingMarginMetric(losingMargin: number): Metric
   {
+    if (losingMargin < 0) // invalid
+    {
+      console.error("Invalid losing margin: " + losingMargin);
+      return new Metric(this.worthWatching, this.yourTeamScore, this.opponentScore);
+    }
+
     let result: boolean = this.worthWatching;
     if (this.yourTeamScore > this.opponentScore) // your team wins
     {
@@ -72,7 +78,13 @@ export class Metric
    */
   public applyMaxWinMarginMetric(maxWinMargin: number): Metric
   {
-    let result: boolean = this.worthWatching;
+    if (maxWinMargin <= 0) // invalid
+    {
+      console.error("Invalid max win margin: " + maxWinMargin);
+      return new Metric(this.worthWatching, this.yourTeamScore, this.opponentScore);
+    }
+
+    let result: boolean = false;
     const scoreDiff: number = this.yourTeamScore - this.opponentScore;
     if (scoreDiff > 0) // your team wins
     {
@@ -90,7 +102,39 @@ export class Metric
 
 
 
+function hatTricksHelper(team: any)
+{
+  //tslint:disable
+  for (const player in team.players)
+  {
+    try
+    {
+      const stats = team.players[player].stats;
+      const skaterStats = stats.skaterStats; //could be goalieStats
+      if (skaterStats !== undefined && skaterStats !== {}) //we have valid stats
+      {
+        if (skaterStats.goals >= 3)
+        {
+          console.log("Hat trick")
+          return true;
+        }
+      }
+    }
+    catch (e)
+    {
+      console.error(`hat trick error: ${e}`);
+    }
+  }
+  return false;
+}
 
+//TODO: specify only home team
+function getHatTricks(homeTeam: any, awayTeam: any): boolean
+{
+  let result = hatTricksHelper(homeTeam);
+  result = result || hatTricksHelper(awayTeam);
+  return result;
+}
 
 // /**
 //  *
@@ -140,6 +184,7 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
   try
   {
     const url = "https://statsapi.web.nhl.com/api/v1/schedule?teamId=" + YOUR_TEAM_ID + "&date=" + date;
+    console.log(url)
 
     const gameDataRaw = await fetch(url);
     const gameData = await gameDataRaw.json();
@@ -160,6 +205,7 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     }
 
     const boxScoreUrl = "https://statsapi.web.nhl.com/api/v1/game/" + gameIdStr + "/boxscore";
+    console.log(boxScoreUrl)
 
     const boxScore = await fetch(boxScoreUrl);
     const gameResults = await boxScore.json();
@@ -171,6 +217,8 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
 
     const homeTeam = gameResults.teams.home;
     const awayTeam = gameResults.teams.away;
+
+    getHatTricks(homeTeam, awayTeam);
 
     const homeScore = homeTeam.teamStats.teamSkaterStats.goals;
     const awayScore = awayTeam.teamStats.teamSkaterStats.goals;

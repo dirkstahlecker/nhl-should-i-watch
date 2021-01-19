@@ -446,7 +446,7 @@ class App extends React.Component<AppProps>
     </>;
   }
 
-  private renderNumberInput(id: string, value: string, label: string, tooltip: string,
+  private renderNumberInput(id: string, value: string | null, label: string, tooltip: string,
     onChange: (e: React.FormEvent<HTMLInputElement>) => void): JSX.Element
   {
     return <>
@@ -461,7 +461,7 @@ class App extends React.Component<AppProps>
         type="number"
         id={id}
         className="numberInput"
-        value={value} 
+        value={value == null ? "" : value} 
         onChange={onChange}
       />
     </>;
