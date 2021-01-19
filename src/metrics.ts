@@ -19,25 +19,41 @@ export class Metric
   // apply____Metric functions take in whether it's currently worth watching and the two scores.
   // Returns the new value of worth watching as a new Metric for chaining
   // Should be standalone and independent of order.
-  // Usually either set worthWatching to true or return what it was. Only set to false if standalone
+  // Don't set worthWatching to false - only set to true or previous value
 
   /**
    * Return YES if:
-   *  -Your team wins
+   *  -Your team wins (by less than maxWinMargin if defined)
    *  -Your team loses by less than or equal to the losingMargin
    */
-  public applyLosingMarginMetric(losingMargin: number): Metric
+  public applyBasicScoreMetric(losingMargin: number, maxWinMargin: number | null): Metric
   {
     if (losingMargin < 0) // invalid
     {
       console.error("Invalid losing margin: " + losingMargin);
       return new Metric(this.worthWatching, this.yourTeamScore, this.opponentScore);
     }
+    if (maxWinMargin != null && maxWinMargin <= 0) // invalid
+    {
+      console.error("Invalid max win margin: " + maxWinMargin);
+      return new Metric(this.worthWatching, this.yourTeamScore, this.opponentScore);
+    }
+
+    const scoreDiff: number = this.yourTeamScore - this.opponentScore;
+
 
     let result: boolean = this.worthWatching;
-    if (this.yourTeamScore > this.opponentScore) // your team wins
+    if (scoreDiff > 0) // your team wins
     {
       result = true;
+
+      if (maxWinMargin != null) //need to check max win
+      {
+        if (scoreDiff > maxWinMargin)
+        {
+          result = false; //not within the margin, so make it false
+        }
+      }
     }
     else if (Math.abs(this.opponentScore - this.yourTeamScore) <= losingMargin) // loss, but close enough
     {
@@ -72,37 +88,32 @@ export class Metric
     return new Metric(result, this.yourTeamScore, this.opponentScore);
   }
 
-  /**
-   * Return YES if:
-   *  -Your team wins by less than or equal to the maxWinMargin
-   */
-  public applyMaxWinMarginMetric(maxWinMargin: number): Metric
+  /*
+    * Return YES if:
+    *  -Someone on your team gets a hat trick (if onlyYourTeam = true)
+    *  -Someone on either team gets a hat trick (if onlyYourTeam = false)
+    */
+  public applyHatTrickMetric(onlyYourTeam: boolean, homeHatTrick: boolean, awayHatTrick: boolean): Metric
   {
-    if (maxWinMargin <= 0) // invalid
+    let result: boolean = this.worthWatching;
+    if (onlyYourTeam)
     {
-      console.error("Invalid max win margin: " + maxWinMargin);
-      return new Metric(this.worthWatching, this.yourTeamScore, this.opponentScore);
+      result = homeHatTrick;
+    }
+    else
+    {
+      result = homeHatTrick || awayHatTrick;
     }
 
-    let result: boolean = false;
-    const scoreDiff: number = this.yourTeamScore - this.opponentScore;
-    if (scoreDiff > 0) // your team wins
-    {
-      if (scoreDiff <= maxWinMargin) // within the margin
-      {
-        result = true;
-      }
-    }
-
-    console.log(`max win metric: ${result}`);
-    return new Metric(result, this.yourTeamScore, this.opponentScore); // your team loses
+    console.log(`hat trick metric: ${result}`);
+    return new Metric(result, this.yourTeamScore, this.opponentScore);
   }
 }
 
 
 
 
-function hatTricksHelper(team: any)
+function getHatTricks(team: any)
 {
   //tslint:disable
   for (const player in team.players)
@@ -126,14 +137,6 @@ function hatTricksHelper(team: any)
     }
   }
   return false;
-}
-
-//TODO: specify only home team
-function getHatTricks(homeTeam: any, awayTeam: any): boolean
-{
-  let result = hatTricksHelper(homeTeam);
-  result = result || hatTricksHelper(awayTeam);
-  return result;
 }
 
 // /**
@@ -218,7 +221,8 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     const homeTeam = gameResults.teams.home;
     const awayTeam = gameResults.teams.away;
 
-    getHatTricks(homeTeam, awayTeam);
+    const homeHatTricks = getHatTricks(homeTeam);
+    const awayHatTricks = getHatTricks(awayTeam);
 
     const homeScore = homeTeam.teamStats.teamSkaterStats.goals;
     const awayScore = awayTeam.teamStats.teamSkaterStats.goals;
@@ -246,9 +250,9 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     // const worthWatching = worthIt1(yourTeamScore, opponentScore);
 
     const worthWatching: boolean = new Metric(false, yourTeamScore, opponentScore)
-      .applyLosingMarginMetric(losingMargin)
+      .applyBasicScoreMetric(losingMargin, maxWinDifferential)
       .applyRandomPercentageMetric(randomPercent)
-      .applyMaxWinMarginMetric(maxWinDifferential)
+      .applyHatTrickMetric(false, homeHatTricks, awayHatTricks) //TODO: onlyYourTeam
       .worthWatching;
 
     return {worthWatching, error: null};

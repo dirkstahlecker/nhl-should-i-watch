@@ -552,4 +552,5 @@ Metric ideas:
   -first career goal (your team / either team)
   -hat trick (your team / either team)
   -fight (player / anyone)
+  -goalie goal (your team / either team)
 */
