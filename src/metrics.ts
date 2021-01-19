@@ -108,6 +108,27 @@ export class Metric
     console.log(`hat trick metric: ${result}`);
     return new Metric(result, this.yourTeamScore, this.opponentScore);
   }
+
+  // /*
+  //   * Return YES if:
+  //   *  -Someone on your team gets a hat trick (if onlyYourTeam = true)
+  //   *  -Someone on either team gets a hat trick (if onlyYourTeam = false)
+  //   */
+  //  public applyGoalieGoalMetric(home: boolean, away: boolean: Metric
+  //  {
+  //    let result: boolean = this.worthWatching;
+  //    if (home)
+  //    {
+  //      result = result || homeHatTrick;
+  //    }
+  //    if (away)
+  //    {
+  //      result = result || awayHatTrick;
+  //    }
+ 
+  //    console.log(`hat trick metric: ${result}`);
+  //    return new Metric(result, this.yourTeamScore, this.opponentScore);
+  //  }
 }
 
 
@@ -137,6 +158,36 @@ function getHatTricks(team: any)
     }
   }
   return false;
+}
+
+function getGoalieGoal(homeInfo: any, awayInfo: any): boolean
+{
+  function helper(info: any): boolean
+  {
+    //tslint:disable
+    for (const player in info.players)
+    {
+      try
+      {
+        const stats = homeInfo.players[player].stats;
+        const goalieStats = stats.goalieStats;
+        if (goalieStats !== undefined && goalieStats !== {}) //we have valid stats
+        {
+          if (goalieStats.goals > 0)
+          {
+            console.log("Goalie Goal")
+            return true;
+          }
+        }
+      }
+      catch (e)
+      {
+        console.error(`hat trick error: ${e}`);
+      }
+    }
+  }
+
+  return helper(homeInfo) || helper(awayInfo);
 }
 
 // /**
@@ -252,7 +303,8 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
 
     let worthWatching: Metric = new Metric(false, yourTeamScore, opponentScore)
       .applyBasicScoreMetric(losingMargin, maxWinDifferential)
-      .applyRandomPercentageMetric(randomPercent);
+      .applyRandomPercentageMetric(randomPercent)
+      .goali
 
     if (hatTrickHome || hatTrickAway)
     {
