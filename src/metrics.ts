@@ -125,7 +125,7 @@ export class Metric
   //    {
   //      result = result || awayHatTrick;
   //    }
- 
+
   //    console.log(`hat trick metric: ${result}`);
   //    return new Metric(result, this.yourTeamScore, this.opponentScore);
   //  }
@@ -303,8 +303,7 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
 
     let worthWatching: Metric = new Metric(false, yourTeamScore, opponentScore)
       .applyBasicScoreMetric(losingMargin, maxWinDifferential)
-      .applyRandomPercentageMetric(randomPercent)
-      .goali
+      .applyRandomPercentageMetric(randomPercent);
 
     if (hatTrickHome || hatTrickAway)
     {
