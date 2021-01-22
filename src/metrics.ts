@@ -299,8 +299,6 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     console.log("your team score: " + yourTeamScore);
     console.log("opponent team score: " + opponentScore);
 
-    // const worthWatching = worthIt1(yourTeamScore, opponentScore);
-
     let worthWatching: Metric = new Metric(false, yourTeamScore, opponentScore)
       .applyBasicScoreMetric(losingMargin, maxWinDifferential)
       .applyRandomPercentageMetric(randomPercent);

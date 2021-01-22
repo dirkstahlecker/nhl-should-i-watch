@@ -1,5 +1,5 @@
 body {
-  background-color: #e6e8f5;
+  background-color: #dcdcdc;
   text-align: center;
 }
 
@@ -14,26 +14,34 @@ h1 {
 
 .headerSection
 {
-  /*background-color: #e9ecef;*/
+  /* background-color: #e9ecef; */
   color: #8b8b8b;
   width: 100%;
 }
 
+.metrics {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .App {
+  background-color: #FFF;
+  width: 75%;
+  padding: 20px;
   display: inline-block;
   flex-direction: column;
   align-items: center;
-  margin: 2em;
+  margin: 1em;
   white-space: pre;
 
-
-
   font-size: 18px;
-  /*font-family: "Courier New", monospace;*/
+  border-radius: 8px;
 }
 
 .gameOptions {
-  padding-top: 10px;
+  padding-top: 5px;
 }
 
 .columnSection {
@@ -46,20 +54,34 @@ h1 {
 }
 
 .metrics {
-  padding-top: 30px;
+  padding-top: 20px;
   text-align: left;
+  display: flex;
+  flex-direction: column;
 }
 
 .footer {
-   position: absolute;
-   bottom: 0;
-   left: 0;
-   width: 100%;
-   height: 50px;
-   text-align: center;
-   color: #afafaf;
-   font-size: 14px;
+  padding-bottom: 30px;
 }
+
+/* .footer {
+  height:24px;
+  width: 100%;
+  background-color: #dcdcdc;
+  background-image: none; 
+  background-repeat: repeat;
+  background-attachment: scroll; 
+  background-position: 0% 0%;
+  position: fixed;
+  bottom: 0pt;
+  left: 0pt;
+}
+
+.footer_contents {
+  height: 24px;
+  width: 1000px;
+  margin: auto;
+} */
 
 button {
   border-radius: 6px;
@@ -80,14 +102,15 @@ button:active {
 .numberInput {
   width: 50px;
   /*font-size: 1.5em;*/
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: 10px;
+  margin-bottom: 10px;
   /*border: 1px solid grey*/
   padding: 5px;
 }
 
 .resultsArea {
   font-size: 24px;
+  font-weight: 600;
 }
 
 .resultYes {
@@ -100,17 +123,6 @@ button:active {
 
 .resultError {
   color: #ff0000;
-}
-
-details {
-  outline: none;
-  /*background-color: #e9ecef;*/
-  /*width: fit-content;*/
-
-}
-
-summary {
-  outline: none;
 }
 
 i {

@@ -465,7 +465,7 @@ class App extends React.Component<AppProps>
   private renderNumberMetric(id: string, value: string | null, label: string, tooltip: string,
     onChange: (e: React.FormEvent<HTMLInputElement>) => void): JSX.Element
   {
-    return <>
+    return <div className="metricRow">
       <label 
         htmlFor={id}
         title={tooltip}
@@ -480,12 +480,12 @@ class App extends React.Component<AppProps>
         value={value == null ? "" : value} 
         onChange={onChange}
       />
-    </>;
+    </div>;
   }
 
   private renderHatTrickMetric(): JSX.Element
   {
-    return <>
+    return <div className="metricRow">
       Hat Trick:
       <label>Home Team:</label>
       &nbsp;
@@ -503,7 +503,16 @@ class App extends React.Component<AppProps>
         checked={this.machine.hatTrickAway} 
         onChange={this.onHatTrickAwayChange}
       />
-    </>;
+    </div>;
+  }
+
+  private renderFooter(): JSX.Element
+  {
+    return <div className="footer">
+      <div className="footer_contents">
+        Questions or feedback? Email <a href="mailto:nhlshouldiwatchapp@gmail.com">NHLShouldIWatchApp@gmail.com</a>
+      </div>
+    </div>;
   }
 
   render()
@@ -511,11 +520,11 @@ class App extends React.Component<AppProps>
     return (
       <div className="outerArea">
         <div className="App">
-          <div className="upperHalf">
-            <div className="headerSection">
-              <h1>Should I Watch?</h1>
-              <h3>Quickly find out if a recorded NHL game is worth watching</h3>
-            </div>
+          <div className="headerSection">
+            <h1>Should I Watch?</h1>
+            <h3>Quickly find out if a recorded NHL game is worth watching</h3>
+          </div>
+          <div className="bodySection">
             <div className="columnSection gameOptions">
               {this.renderTeamDropdown()}
               &nbsp;
@@ -545,34 +554,31 @@ class App extends React.Component<AppProps>
             </div>
       
             <div className="columnSection metrics">
-              <details>
-                <summary>Adjust Metrics</summary>
+                <h4>Metrics:</h4>
                 {this.renderNumberMetric("marginInp", 
                   this.machine.margin,
                   "Losing Margin:",
                   "Number of goals your team can lose by and still return YES", 
                   this.onMarginChange)}
-                <br/>
+                
                 {this.renderNumberMetric("maxWinDifferential", 
                   this.machine.maxWinDifferential, 
                   "Max Win Differential:",
                   "Number of goals your team can win by and still return YES",
                   this.onMaxWinChange)}
-                <br/>
+                
                 {this.renderNumberMetric("randomPercent",
                   this.machine.percentage,
                   "Random Percentage:",
                   "The probability of returning YES when it would otherwise return NO",
                   this.onPercentChange)}
-                <br/>
+                
                 {this.renderHatTrickMetric()}
-               </details>
-            </div>
-            <div className="footer">
-              Questions or feedback? Email nhlshouldiwatchapp@gmail.com
             </div>
           </div>
+          
         </div>
+        {this.renderFooter()}
       </div>
     )
   }
@@ -585,6 +591,7 @@ export default App;
 //expanding metrics moves the carat around on the screen
 //does everything work with 0? 
 //error handling for invalid number / negative numbers
+//default metrics to expanded (maybe don't even need to allow collapsing)
 
 
 /*

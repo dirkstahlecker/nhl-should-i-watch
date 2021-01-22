@@ -23,6 +23,8 @@ app.use(body_parser_1.default.json());
     differential,
     randomPercent,
     maxWinDifferential,
+    hatTrickHome,
+    hatTrickAway
   }
 */
 app.post('/api/worthWatching/:teamId/:date', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

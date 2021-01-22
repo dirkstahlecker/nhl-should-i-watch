@@ -14,6 +14,8 @@ app.use(bodyParser.json());
     differential,
     randomPercent,
     maxWinDifferential,
+    hatTrickHome,
+    hatTrickAway
   }
 */
 app.post('/api/worthWatching/:teamId/:date', async (req, res) => {
@@ -28,8 +30,8 @@ app.post('/api/worthWatching/:teamId/:date', async (req, res) => {
   const losingMargin = req.body.differential;
   const randomPercent = req.body.randomPercent;
   const maxWinDifferential = req.body.maxWinDifferential;
-  const hatTrickHome = req.body.hatTrickHome;
-  const hatTrickAway = req.body.hatTrickAway;
+  const hatTrickHome: boolean = req.body.hatTrickHome;
+  const hatTrickAway: boolean = req.body.hatTrickAway;
 
   const result = await getResults(YOUR_TEAM_ID, date, losingMargin, randomPercent, maxWinDifferential,
     hatTrickHome, hatTrickAway);
