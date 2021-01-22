@@ -24,6 +24,15 @@ h1 {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
+  padding-top: 20px;
+  
+}
+
+.metricsHeader {
+  color: #000;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .App {
@@ -45,19 +54,12 @@ h1 {
 }
 
 .columnSection {
-  flex-direction: row;
+  /* flex-direction: row; */
   width: 100%;
 }
 
 .upperHalf {
   width: fit-content;
-}
-
-.metrics {
-  padding-top: 20px;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
 }
 
 .footer {
@@ -111,6 +113,7 @@ button:active {
 .resultsArea {
   font-size: 24px;
   font-weight: 600;
+  padding-top: 20px;
 }
 
 .resultYes {

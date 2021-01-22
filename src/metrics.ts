@@ -41,7 +41,6 @@ export class Metric
 
     const scoreDiff: number = this.yourTeamScore - this.opponentScore;
 
-
     let result: boolean = this.worthWatching;
     if (scoreDiff > 0) // your team wins
     {

@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import {observer} from "mobx-react";
 import {makeObservable, observable, runInAction, action} from "mobx";
 import { teams } from './teams';
+import ReactTooltip from 'react-tooltip';
 
 export class AppMachine
 {
@@ -395,6 +396,10 @@ class App extends React.Component<AppProps>
 
   @action
   onTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    //reset result when team or date changes
+    this.machine.worthWatching = null;
+    this.machine.error = null;
+
     const teamId = e.currentTarget.value;
     this.machine.selectedTeam = Number.parseInt(teamId);
     Cookies.set("initialSelectedTeam", teamId);
@@ -409,6 +414,10 @@ class App extends React.Component<AppProps>
 
   @action
   onDateChange = (e: React.FormEvent<HTMLInputElement>) => {
+    //reset result when team or date changes
+    this.machine.worthWatching = null;
+    this.machine.error = null;
+
     this.machine.date = e.currentTarget.value;
   }
 
@@ -468,9 +477,9 @@ class App extends React.Component<AppProps>
     return <div className="metricRow">
       <label 
         htmlFor={id}
-        title={tooltip}
+        // title={tooltip}
       >
-        {label}
+        {label}: <span data-tip={tooltip}>&#9432;</span>
       </label>
       &nbsp;
       <input 
@@ -519,6 +528,7 @@ class App extends React.Component<AppProps>
   {
     return (
       <div className="outerArea">
+        <ReactTooltip effect="solid"/>
         <div className="App">
           <div className="headerSection">
             <h1>Should I Watch?</h1>
@@ -552,24 +562,24 @@ class App extends React.Component<AppProps>
                 <div className="resultPlaceholder">&nbsp;</div>
               }
             </div>
-      
+            <hr/>
             <div className="columnSection metrics">
-                <h4>Metrics:</h4>
+                <div className="columnSection metricsHeader">Metrics:</div>
                 {this.renderNumberMetric("marginInp", 
                   this.machine.margin,
-                  "Losing Margin:",
+                  "Losing Margin",
                   "Number of goals your team can lose by and still return YES", 
                   this.onMarginChange)}
                 
                 {this.renderNumberMetric("maxWinDifferential", 
                   this.machine.maxWinDifferential, 
-                  "Max Win Differential:",
+                  "Max Win Differential",
                   "Number of goals your team can win by and still return YES",
                   this.onMaxWinChange)}
                 
                 {this.renderNumberMetric("randomPercent",
                   this.machine.percentage,
-                  "Random Percentage:",
+                  "Random Percentage",
                   "The probability of returning YES when it would otherwise return NO",
                   this.onPercentChange)}
                 
