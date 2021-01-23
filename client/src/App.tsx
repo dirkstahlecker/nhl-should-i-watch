@@ -475,13 +475,6 @@ class App extends React.Component<AppProps>
     onChange: (e: React.FormEvent<HTMLInputElement>) => void): JSX.Element
   {
     return <div className="metricRow">
-      <label 
-        htmlFor={id}
-        // title={tooltip}
-      >
-        {label}: <span data-tip={tooltip}>&#9432;</span>
-      </label>
-      &nbsp;
       <input 
         type="number"
         id={id}
@@ -489,6 +482,13 @@ class App extends React.Component<AppProps>
         value={value == null ? "" : value} 
         onChange={onChange}
       />
+      
+      &nbsp;
+
+      <label htmlFor={id}>
+        {label} <span data-tip={tooltip}>&#9432;</span>
+      </label>
+      
     </div>;
   }
 
@@ -520,6 +520,8 @@ class App extends React.Component<AppProps>
     return <div className="footer">
       <div className="footer_contents">
         Questions or feedback? Email <a href="mailto:nhlshouldiwatchapp@gmail.com">NHLShouldIWatchApp@gmail.com</a>
+        <br/>
+        Website Copyright &#169; {new Date().getFullYear()} Dirk Stahlecker
       </div>
     </div>;
   }
@@ -583,7 +585,7 @@ class App extends React.Component<AppProps>
                   "The probability of returning YES when it would otherwise return NO",
                   this.onPercentChange)}
                 
-                {this.renderHatTrickMetric()}
+                {/* {this.renderHatTrickMetric()} */}
             </div>
           </div>
           

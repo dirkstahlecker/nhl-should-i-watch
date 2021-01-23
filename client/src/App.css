@@ -91,18 +91,11 @@ button {
 
 input {
   border-radius: 6px;
-}
-
-button:hover {
-  /*background-color: rgb(255, 235, 59);*/
-}
-
-button:active {
-  /*background-color: rgb(255, 244, 142);*/
+  border-width: 1px;
 }
 
 .numberInput {
-  width: 50px;
+  width: 30px;
   /*font-size: 1.5em;*/
   margin-top: 10px;
   margin-bottom: 10px;
