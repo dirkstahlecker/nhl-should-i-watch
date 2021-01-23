@@ -60,6 +60,15 @@ button {
 
 .gameOptions {
   padding-top: 5px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gameOptionsRow {
+  padding: 5px;
 }
 
 .columnSection {

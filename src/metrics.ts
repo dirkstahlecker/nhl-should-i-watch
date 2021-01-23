@@ -26,14 +26,14 @@ export class Metric
    *  -Your team wins (by less than maxWinMargin if defined)
    *  -Your team loses by less than or equal to the losingMargin
    */
-  public applyBasicScoreMetric(losingMargin: number, maxWinMargin: number | null): Metric
+  public applyBasicScoreMetric(losingMargin: number, maxWinMargin: number | string | null): Metric
   {
     if (losingMargin < 0) // invalid
     {
       console.error("Invalid losing margin: " + losingMargin);
       return new Metric(this.worthWatching, this.yourTeamScore, this.opponentScore);
     }
-    if (maxWinMargin != null && maxWinMargin <= 0) // invalid
+    if (maxWinMargin !== "" && maxWinMargin <= 0) // invalid
     {
       console.error("Invalid max win margin: " + maxWinMargin);
       return new Metric(this.worthWatching, this.yourTeamScore, this.opponentScore);
@@ -46,7 +46,7 @@ export class Metric
     {
       result = true;
 
-      if (maxWinMargin != null) // need to check max win
+      if (maxWinMargin !== "" && maxWinMargin != null) // need to check max win
       {
         if (scoreDiff > maxWinMargin)
         {

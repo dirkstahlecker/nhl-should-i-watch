@@ -550,13 +550,14 @@ class App extends React.Component<AppProps>
           </div>
           <div className="bodySection">
             <div className="columnSection gameOptions">
-              {this.renderTeamDropdown()}
-              &nbsp;
-              <label htmlFor="date">Game Date: </label>
-              <input type="date" id="date" value={this.machine.date} onChange={this.onDateChange}/>
-
-              &nbsp;
-              <button onClick={this.fetchData}>Should I Watch?</button>
+              <div className="gameOptionsRow">{this.renderTeamDropdown()}</div>
+              <div className="gameOptionsRow">
+                <label htmlFor="date">Game Date: </label>
+                <input type="date" id="date" value={this.machine.date} onChange={this.onDateChange}/>
+              </div>
+              <div className="gameOptionsRow">
+                <button onClick={this.fetchData}>Should I Watch?</button>
+              </div>
             </div>
             <div className="columnSection resultsArea">
               {
@@ -617,6 +618,7 @@ export default App;
 //error handling for invalid number / negative numbers
 //try on mobile
 //client validation of invalid numbers - just don't allow them to be typed in
+//fix styling in firefox
 
 
 
