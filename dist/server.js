@@ -60,6 +60,7 @@ app.get('/api/initialStartup', (req, res) => __awaiter(void 0, void 0, void 0, f
     const info = yield infoRaw.json();
     const ip = info.ip;
     console.log(`Visitor IP: ||${hash(ip)}||`);
+    res.end();
 }));
 // // The "catchall" handler: for any request that doesn't
 // // match one above, send back React's index.html file.

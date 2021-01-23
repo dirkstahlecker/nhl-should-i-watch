@@ -4,7 +4,16 @@ body {
 }
 
 h1 {
+  color: #0000aa;
+}
+
+h3 {
   color: #000;
+}
+
+button {
+  background-color: #5285de;
+  color: white;
 }
 
 .outerArea {
@@ -30,7 +39,7 @@ h1 {
 }
 
 .metricsHeader {
-  color: #000;
+  color: #00A;
   font-size: 20px;
   font-weight: 600;
 }
