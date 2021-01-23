@@ -8,7 +8,7 @@ import ReactTooltip from 'react-tooltip';
 ReactDOM.render(
   <React.StrictMode>
     <ReactTooltip 
-      effect="solid"
+      // effect="solid"
     />
     <App machine={new AppMachine()}/>
   </React.StrictMode>,
