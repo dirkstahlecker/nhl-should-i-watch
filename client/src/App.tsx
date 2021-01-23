@@ -486,9 +486,15 @@ class App extends React.Component<AppProps>
       &nbsp;
 
       <label htmlFor={id}>
-        {label} <span data-tip={tooltip}>&#9432;</span>
+        {/* {label} <span data-tip={tooltip}>&#9432;</span> */}
+        {label}&nbsp;
+        <span data-tip data-for={id}>
+          &#9432;
+        </span>
+        <ReactTooltip id={id} place="top" effect="solid">
+          {tooltip}
+        </ReactTooltip>
       </label>
-      
     </div>;
   }
 

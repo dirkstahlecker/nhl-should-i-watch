@@ -2,14 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App, { AppMachine } from './App';
-import ReactTooltip from 'react-tooltip';
 // import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ReactTooltip 
-      // effect="solid"
-    />
     <App machine={new AppMachine()}/>
   </React.StrictMode>,
   document.getElementById('root')
