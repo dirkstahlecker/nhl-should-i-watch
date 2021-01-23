@@ -530,7 +530,9 @@ class App extends React.Component<AppProps>
   {
     return (
       <div className="outerArea">
-        <ReactTooltip effect="solid"/>
+        <ReactTooltip 
+          // effect="solid"
+        />
         <div className="App">
           <div className="headerSection">
             <h1>Should I Watch?</h1>
@@ -603,7 +605,9 @@ export default App;
 //expanding metrics moves the carat around on the screen
 //does everything work with 0? 
 //error handling for invalid number / negative numbers
-//default metrics to expanded (maybe don't even need to allow collapsing)
+//try on mobile
+//client validation of invalid numbers - just don't allow them to be typed in
+
 
 
 /*
