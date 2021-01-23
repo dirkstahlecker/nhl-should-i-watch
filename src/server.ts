@@ -59,6 +59,7 @@ app.get('/api/initialStartup', async(req, res) => {
 
   const ip = info.ip;
   console.log(`Visitor IP: ||${hash(ip)}||`);
+  res.end();
 })
 
 
