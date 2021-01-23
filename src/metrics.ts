@@ -238,7 +238,6 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
   try
   {
     const url = "https://statsapi.web.nhl.com/api/v1/schedule?teamId=" + YOUR_TEAM_ID + "&date=" + date;
-    console.log(url)
 
     const gameDataRaw = await fetch(url);
     const gameData = await gameDataRaw.json();
@@ -259,7 +258,6 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     }
 
     const boxScoreUrl = "https://statsapi.web.nhl.com/api/v1/game/" + gameIdStr + "/boxscore";
-    console.log(boxScoreUrl)
 
     const boxScore = await fetch(boxScoreUrl);
     const gameResults = await boxScore.json();
@@ -295,8 +293,8 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
       return {worthWatching: false, error: "Cannot locate team"};
     }
 
-    console.log("your team score: " + yourTeamScore);
-    console.log("opponent team score: " + opponentScore);
+    // console.log("your team score: " + yourTeamScore);
+    // console.log("opponent team score: " + opponentScore);
 
     let worthWatching: Metric = new Metric(false, yourTeamScore, opponentScore)
       .applyBasicScoreMetric(losingMargin, maxWinDifferential)
@@ -311,7 +309,7 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
   }
   catch (err)
   {
-    console.error(err);
+    // console.error(err);
     return {worthWatching: false, error: "Failed to fetch data"};
   }
 }

@@ -2,12 +2,24 @@ import express from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
 import { getResults } from './metrics';
+import fetch from "node-fetch";
 
 const app = express();
 
 app.use(bodyParser.json());
 
-
+//tslint:disable
+const hash = (input: string): number => {
+  let hash = 0, i, chr;
+  for (i = 0; i < input.length; i++)
+  {
+    chr = input.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+}
+// tslint:enable
 
 /*
   Body: {
@@ -39,14 +51,15 @@ app.post('/api/worthWatching/:teamId/:date', async (req, res) => {
   res.json(result);
 })
 
-/*
-  body: {}
-*/
-app.post('/api/setMetric', (request, response) => {
-  response.send(request.body);    // echo the result back
-});
+// log the IP address of each user on page load so we can estimate the unique visitors
+app.get('/api/initialStartup', async(req, res) => {
+  const url = "https://json.geoiplookup.io/";
+  const infoRaw = await fetch(url);
+  const info = await infoRaw.json();
 
-
+  const ip = info.ip;
+  console.log(`Visitor IP: ||${hash(ip)}||`);
+})
 
 
 // // The "catchall" handler: for any request that doesn't

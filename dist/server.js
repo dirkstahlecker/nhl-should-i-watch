@@ -16,8 +16,20 @@ const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const metrics_1 = require("./metrics");
+const node_fetch_1 = __importDefault(require("node-fetch"));
 const app = express_1.default();
 app.use(body_parser_1.default.json());
+//tslint:disable
+const hash = (input) => {
+    let hash = 0, i, chr;
+    for (i = 0; i < input.length; i++) {
+        chr = input.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
+// tslint:enable
 /*
   Body: {
     differential,
@@ -41,12 +53,14 @@ app.post('/api/worthWatching/:teamId/:date', (req, res) => __awaiter(void 0, voi
     const result = yield metrics_1.getResults(YOUR_TEAM_ID, date, losingMargin, randomPercent, maxWinDifferential, hatTrickHome, hatTrickAway);
     res.json(result);
 }));
-/*
-  body: {}
-*/
-app.post('/api/setMetric', (request, response) => {
-    response.send(request.body); // echo the result back
-});
+// log the IP address of each user on page load so we can estimate the unique visitors
+app.get('/api/initialStartup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const url = "https://json.geoiplookup.io/";
+    const infoRaw = yield node_fetch_1.default(url);
+    const info = yield infoRaw.json();
+    const ip = info.ip;
+    console.log(`Visitor IP: ||${hash(ip)}||`);
+}));
 // // The "catchall" handler: for any request that doesn't
 // // match one above, send back React's index.html file.
 // app.get('*', (req, res) => {

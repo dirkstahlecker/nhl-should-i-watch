@@ -28,6 +28,11 @@ export class AppMachine
   {
     makeObservable(this);
   }
+
+  public makeInitialServerCall(): void
+  {
+    fetch("/api/initialStartup");
+  }
 }
 
 export interface AppProps
@@ -256,6 +261,8 @@ class App extends React.Component<AppProps>
   @action
   componentDidMount()
   {
+    this.machine.makeInitialServerCall()
+
     this.setInitialSelectedTeam();
 
     const marginCookie = Cookies.get("margin");
@@ -574,20 +581,20 @@ class App extends React.Component<AppProps>
                 <div className="columnSection metricsHeader">Metrics:</div>
                 {this.renderNumberMetric("marginInp", 
                   this.machine.margin,
-                  "Losing Margin",
+                  "Losing Goal Margin",
                   "Number of goals your team can lose by and still return YES", 
                   this.onMarginChange)}
                 
                 {this.renderNumberMetric("maxWinDifferential", 
                   this.machine.maxWinDifferential, 
-                  "Max Win Differential",
+                  "Winning Goal Margin",
                   "Number of goals your team can win by and still return YES",
                   this.onMaxWinChange)}
                 
                 {this.renderNumberMetric("randomPercent",
                   this.machine.percentage,
                   "Random Percentage",
-                  "The probability of returning YES when it would otherwise return NO",
+                  "Random chance of returning YES when it would otherwise return NO",
                   this.onPercentChange)}
                 
                 {/* {this.renderHatTrickMetric()} */}
