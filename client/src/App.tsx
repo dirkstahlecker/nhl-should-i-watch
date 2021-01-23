@@ -530,9 +530,6 @@ class App extends React.Component<AppProps>
   {
     return (
       <div className="outerArea">
-        <ReactTooltip 
-          // effect="solid"
-        />
         <div className="App">
           <div className="headerSection">
             <h1>Should I Watch?</h1>
