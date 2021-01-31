@@ -438,6 +438,14 @@ class App extends React.Component<AppProps>
     this.machine.hatTrickAway = e.currentTarget.checked;
   }
 
+  @action
+  private resetDefaultMetrics(): void
+  {
+    this.machine.margin = this.machine.DEFAULT_MARGIN;
+    this.machine.percentage = this.machine.DEFAULT_PERCENTAGE;
+    this.machine.maxWinDifferential = this.machine.DEFAULT_WIN_DIFF;
+  }
+
   private renderTeamDropdown(): JSX.Element
   {
     return <>
@@ -545,8 +553,8 @@ class App extends React.Component<AppProps>
       <div className="outerArea">
         <div className="App">
           <div className="headerSection">
-            <h1>Should I Watch?</h1>
-            <h3>Quickly find out if a recorded NHL game is worth watching</h3>
+            <div><h1>Should I Watch?</h1></div>
+            <div><h3>Quickly find out if a recorded NHL game is worth watching</h3></div>
           </div>
           <div className="bodySection">
             <div className="columnSection gameOptions">
@@ -599,6 +607,8 @@ class App extends React.Component<AppProps>
                   this.onPercentChange)}
                 
                 {/* {this.renderHatTrickMetric()} */}
+
+                <button onClick={() => this.resetDefaultMetrics()}>Reset to default</button>
             </div>
           </div>
           
@@ -619,6 +629,9 @@ export default App;
 //try on mobile
 //client validation of invalid numbers - just don't allow them to be typed in
 //fix styling in firefox
+//generate an english sentence explaining the chosen metric and put that at the top of the metrics section
+  //"The game is worth watching if your team wins by no more than 3 goals or loses by no less than 1 goal, 
+  //plus a 10% random chance of returning yes."
 
 
 
