@@ -388,17 +388,51 @@ class App extends React.Component<AppProps>
   }
 
   @action
-  onMarginChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const margin = e.currentTarget.value;
+  private setMargin(margin: string): void
+  {
     this.machine.margin = margin;
     Cookies.set("margin", margin);
   }
 
+  onMarginChange = (e: React.FormEvent<HTMLInputElement>) => {
+    let margin: string | null = e.currentTarget.value;
+
+    if (Number.parseInt(margin, 10) < 0)
+    {
+      //don't allow negative numbers
+      margin = this.machine.margin;
+    }
+
+    if (margin == null)
+    {
+      margin = "";
+    }
+
+    this.setMargin(margin);
+  }
+
   @action
-  onPercentChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const percentage = e.currentTarget.value;
+  private setPercentage(percentage: string): void
+  {
     this.machine.percentage = percentage;
     Cookies.set("percentage", percentage);
+  }
+
+  onPercentChange = (e: React.FormEvent<HTMLInputElement>) => {
+    let percentage: string | null = e.currentTarget.value;
+
+    if (Number.parseInt(percentage, 10) < 0)
+    {
+      //don't allow negative numbers
+      percentage = this.machine.percentage;
+    }
+
+    if (percentage == null)
+    {
+      percentage = "";
+    }
+
+    this.setPercentage(percentage);
   }
 
   @action
@@ -413,10 +447,28 @@ class App extends React.Component<AppProps>
   }
 
   @action
-  onMaxWinChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const maxWinDiff = e.currentTarget.value;
+  private setMaxWin(maxWinDiff: string): void
+  {
     this.machine.maxWinDifferential = maxWinDiff;
     Cookies.set("maxWinDifferential", maxWinDiff);
+  }
+
+  @action
+  onMaxWinChange = (e: React.FormEvent<HTMLInputElement>) => {
+    let maxWinDiff: string | null = e.currentTarget.value;
+
+    if (Number.parseInt(maxWinDiff, 10) < 0)
+    {
+      //don't allow negative numbers
+      maxWinDiff = this.machine.maxWinDifferential;
+    }
+
+    if (maxWinDiff == null)
+    {
+      maxWinDiff = "";
+    }
+
+    this.setMaxWin(maxWinDiff);
   }
 
   @action
@@ -441,9 +493,9 @@ class App extends React.Component<AppProps>
   @action
   private resetDefaultMetrics(): void
   {
-    this.machine.margin = this.machine.DEFAULT_MARGIN;
-    this.machine.percentage = this.machine.DEFAULT_PERCENTAGE;
-    this.machine.maxWinDifferential = this.machine.DEFAULT_WIN_DIFF;
+    this.setMargin(this.machine.DEFAULT_MARGIN);
+    this.setPercentage(this.machine.DEFAULT_PERCENTAGE);
+    this.setMaxWin(this.machine.DEFAULT_WIN_DIFF);
   }
 
   private renderTeamDropdown(): JSX.Element
@@ -496,6 +548,8 @@ class App extends React.Component<AppProps>
         className="numberInput"
         value={value == null ? "" : value} 
         onChange={onChange}
+        // onInput={() => {this. = 
+        //   !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null}}
       />
       
       &nbsp;
@@ -547,71 +601,115 @@ class App extends React.Component<AppProps>
     </div>;
   }
 
-  render()
+  private renderMetrics(): JSX.Element
   {
-    return (
-      <div className="outerArea">
-        <div className="App">
-          <div className="headerSection">
-            <div><h1>Should I Watch?</h1></div>
-            <div><h3>Quickly find out if a recorded NHL game is worth watching</h3></div>
-          </div>
-          <div className="bodySection">
-            <div className="columnSection gameOptions">
-              <div className="gameOptionsRow">{this.renderTeamDropdown()}</div>
-              <div className="gameOptionsRow">
-                <label htmlFor="date">Game Date: </label>
-                <input type="date" id="date" value={this.machine.date} onChange={this.onDateChange}/>
+    return <>
+        <div className="columnSection metrics">
+          <div className="halfSection halfSectionLeft">
+            <div className="columnSection">
+              <div className="columnRow">
+              <div className="metricsHeader">Metrics:</div>
+                <div>Return YES if...</div>
               </div>
-              <div className="gameOptionsRow">
-                <button onClick={this.fetchData}>Should I Watch?</button>
-              </div>
-            </div>
-            <div className="columnSection resultsArea">
-              {
-                this.machine.worthWatching != null && this.machine.error == null &&
-                <div className={this.machine.worthWatching ? "resultYes" : "resultNo"}>
-                  {this.machine.worthWatching ? "YES" : "NO"}
-                </div>
-              }
-              {
-                this.machine.error != null &&
-                <div className="resultError">
-                  {this.machine.error}
-                </div>
-              }
-              {
-                this.machine.error == null && this.machine.worthWatching == null &&
-                <div className="resultPlaceholder">&nbsp;</div>
-              }
-            </div>
-            <hr/>
-            <div className="columnSection metrics">
-                <div className="columnSection metricsHeader">Metrics:</div>
+              <div className="columnRow">
                 {this.renderNumberMetric("marginInp", 
                   this.machine.margin,
                   "Losing Goal Margin",
                   "Number of goals your team can lose by and still return YES", 
                   this.onMarginChange)}
-                
+                <div className="explanationColumn">
+                  Your team loses by no more than {this.machine.margin} goals AND
+                </div>
+              </div>
+              <div className="columnRow">
                 {this.renderNumberMetric("maxWinDifferential", 
                   this.machine.maxWinDifferential, 
                   "Winning Goal Margin",
                   "Number of goals your team can win by and still return YES",
                   this.onMaxWinChange)}
-                
+                <div className="explanationColumn">
+                  {
+                    this.machine.maxWinDifferential != null && this.machine.maxWinDifferential !== "" &&
+                    <>{`Your team wins by no more than ${this.machine.maxWinDifferential} goals AND`}</>
+                  }
+                </div>
+              </div>
+              <div className="columnRow">
                 {this.renderNumberMetric("randomPercent",
                   this.machine.percentage,
                   "Random Percentage",
                   "Random chance of returning YES when it would otherwise return NO",
                   this.onPercentChange)}
-                
-                {/* {this.renderHatTrickMetric()} */}
+                <div className="explanationColumn">
+                  A {this.machine.percentage}% chance of randomly saying YES anyway.
+                </div>
+              </div>
+              
+              {/* {this.renderHatTrickMetric()} */}
 
-                <button onClick={() => this.resetDefaultMetrics()}>Reset to default</button>
+              <button onClick={() => this.resetDefaultMetrics()}>Reset to defaults</button>
             </div>
           </div>
-          
+      </div>
+    </>;
+  }
+
+  private renderResults(): JSX.Element
+  {
+    return <div className="columnSection resultsArea">
+      {
+        this.machine.worthWatching != null && this.machine.error == null &&
+        <div className={this.machine.worthWatching ? "resultYes" : "resultNo"}>
+          {this.machine.worthWatching ? "YES" : "NO"}
+        </div>
+      }
+      {
+        this.machine.error != null &&
+        <div className="resultError">
+          {this.machine.error}
+        </div>
+      }
+      {
+        this.machine.error == null && this.machine.worthWatching == null &&
+        <div className="resultPlaceholder">&nbsp;</div>
+      }
+    </div>
+  }
+
+  private renderHeader(): JSX.Element
+  {
+    return <div className="headerSection">
+      <div><h1>Should I Watch?</h1></div>
+      <div><h3>Quickly find out if a recorded NHL game is worth watching</h3></div>
+    </div>
+  }
+
+  private renderGameOptions(): JSX.Element
+  {
+    return <div className="columnSection gameOptions">
+      <div className="gameOptionsRow">{this.renderTeamDropdown()}</div>
+      <div className="gameOptionsRow">
+        <label htmlFor="date">Game Date: </label>
+        <input type="date" id="date" value={this.machine.date} onChange={this.onDateChange}/>
+      </div>
+      <div className="gameOptionsRow">
+        <button onClick={this.fetchData}>Should I Watch?</button>
+      </div>
+    </div>
+  }
+
+  render()
+  {
+    return (
+      <div className="outerArea">
+        <div className="App">
+          {this.renderHeader()}
+          <div className="bodySection">
+            {this.renderGameOptions()}
+            {this.renderResults()}
+            <hr/>
+            {this.renderMetrics()}
+          </div>
         </div>
         {this.renderFooter()}
       </div>
@@ -621,7 +719,7 @@ class App extends React.Component<AppProps>
 
 export default App;
 
-//TODO: when changing team selection, remove previous results
+
 //implement check for games in progress (?)
 //expanding metrics moves the carat around on the screen
 //does everything work with 0? 

@@ -76,6 +76,14 @@ button {
   width: 100%;
 }
 
+.columnRow {
+  display: flex;
+}
+
+.explanationColumn {
+  font-size: 14px;
+}
+
 .upperHalf {
   width: fit-content;
 }
