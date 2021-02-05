@@ -10,7 +10,7 @@ export class AppMachine
 {
   public DEFAULT_MARGIN: string = "1";
   public DEFAULT_PERCENTAGE = "10";
-  public DEFAULT_WIN_DIFF = ""
+  public DEFAULT_WIN_DIFF = "3"
 
   @observable public error: any = null;
   @observable public worthWatching: boolean | null = null;
@@ -603,55 +603,55 @@ class App extends React.Component<AppProps>
 
   private renderMetrics(): JSX.Element
   {
-    return <>
-        <div className="columnSection metrics">
-          <div className="halfSection halfSectionLeft">
-            <div className="columnSection">
-              <div className="columnRow">
-              <div className="metricsHeader">Metrics:</div>
-                <div>Return YES if...</div>
-              </div>
-              <div className="columnRow">
-                {this.renderNumberMetric("marginInp", 
-                  this.machine.margin,
-                  "Losing Goal Margin",
-                  "Number of goals your team can lose by and still return YES", 
-                  this.onMarginChange)}
-                <div className="explanationColumn">
-                  Your team loses by no more than {this.machine.margin} goals AND
-                </div>
-              </div>
-              <div className="columnRow">
-                {this.renderNumberMetric("maxWinDifferential", 
-                  this.machine.maxWinDifferential, 
-                  "Winning Goal Margin",
-                  "Number of goals your team can win by and still return YES",
-                  this.onMaxWinChange)}
-                <div className="explanationColumn">
-                  {
-                    this.machine.maxWinDifferential != null && this.machine.maxWinDifferential !== "" &&
-                    <>{`Your team wins by no more than ${this.machine.maxWinDifferential} goals AND`}</>
-                  }
-                </div>
-              </div>
-              <div className="columnRow">
-                {this.renderNumberMetric("randomPercent",
-                  this.machine.percentage,
-                  "Random Percentage",
-                  "Random chance of returning YES when it would otherwise return NO",
-                  this.onPercentChange)}
-                <div className="explanationColumn">
-                  A {this.machine.percentage}% chance of randomly saying YES anyway.
-                </div>
-              </div>
-              
-              {/* {this.renderHatTrickMetric()} */}
+    return <div className="columnSection metricsWrapper">
+      <div className="grid-container">
+        <div className="metricHeader metricsHeader">Metrics:</div>
+        <div className="englishHeader">Return YES if...</div>
 
-              <button onClick={() => this.resetDefaultMetrics()}>Reset to defaults</button>
-            </div>
-          </div>
+        <div className="losingMargin">
+          {this.renderNumberMetric("marginInp", 
+              this.machine.margin,
+              "Losing Goal Margin",
+              "Number of goals your team can lose by and still return YES", 
+              this.onMarginChange)}
+        </div>
+        <div className="losingMarginEnglish explanationColumn">
+          Your team loses by no more than {this.machine.margin} goals AND
+        </div>
+
+        <div className="maxWin">
+          {this.renderNumberMetric("maxWinDifferential", 
+          this.machine.maxWinDifferential, 
+          "Winning Goal Margin",
+          "Number of goals your team can win by and still return YES",
+          this.onMaxWinChange)}
+        </div>
+        <div className="maxWinEnglish explanationColumn">
+          {
+            this.machine.maxWinDifferential != null && 
+            this.machine.maxWinDifferential !== "" && 
+            Number.parseInt(this.machine.maxWinDifferential) > 0 &&
+            <>{`Your team wins by no more than ${this.machine.maxWinDifferential} goals AND`}</>
+          }
+        </div>
+
+        <div className="random">
+          {this.renderNumberMetric("randomPercent",
+            this.machine.percentage,
+            "Random Percentage",
+            "Random chance of returning YES when it would otherwise return NO",
+            this.onPercentChange)}
+        </div>
+        <div className="randomEnglish explanationColumn">
+          {
+            this.machine.percentage != null && Number.parseInt(this.machine.percentage) > 0 &&
+            <>A {this.machine.percentage}% chance of randomly saying YES anyway.</>
+          }
+        </div>
       </div>
-    </>;
+      
+      <button onClick={() => this.resetDefaultMetrics()}>Reset to defaults</button>
+    </div>;
   }
 
   private renderResults(): JSX.Element
@@ -721,7 +721,6 @@ export default App;
 
 
 //implement check for games in progress (?)
-//expanding metrics moves the carat around on the screen
 //does everything work with 0? 
 //error handling for invalid number / negative numbers
 //try on mobile

@@ -14,7 +14,46 @@ h3 {
 button {
   background-color: #5285de;
   color: white;
+  border-radius: 6px;
 }
+
+
+.metricHeader {
+  grid-area: metricHeader;
+
+  color: #00A;
+  font-size: 20px;
+  font-weight: 600;
+}
+.englishHeader { grid-area: englishHeader; }
+.losingMargin { grid-area: losingMargin; }
+.losingMarginEnglish { grid-area: losingMarginEnglish; }
+.maxWin { grid-area: maxWin; }
+.maxWinEnglish { grid-area: maxWinEnglish; }
+.random { grid-area: random; }
+.randomEnglish { grid-area: randomEnglish; }
+
+.grid-container {
+  align-items: center;
+  margin: auto;
+  width: 60%;
+  display: grid;
+  grid-template-areas:
+    'metricHeader englishHeader'
+    'losingMargin losingMarginEnglish'
+    'maxWin maxWinEnglish'
+    'random randomEnglish';
+}
+
+.grid-container > div {
+  text-align: center;
+}
+
+/* .metricsWrapper {
+  
+} */
+
+
 
 .outerArea {
   width: 100%;
@@ -36,12 +75,6 @@ button {
 
   padding-top: 20px;
   
-}
-
-.metricsHeader {
-  color: #00A;
-  font-size: 20px;
-  font-weight: 600;
 }
 
 .App {
@@ -110,10 +143,6 @@ button {
   width: 1000px;
   margin: auto;
 } */
-
-button {
-  border-radius: 6px;
-}
 
 input {
   border-radius: 6px;
