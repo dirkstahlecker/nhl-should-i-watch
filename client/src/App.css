@@ -47,6 +47,7 @@ button {
 
 .grid-container > div {
   text-align: center;
+  width: 200px;
 }
 
 /* .metricsWrapper {
@@ -74,7 +75,7 @@ button {
   flex-direction: column;
 
   padding-top: 20px;
-  
+  padding-bottom: 20px;
 }
 
 .App {
@@ -162,6 +163,7 @@ input {
   font-size: 24px;
   font-weight: 600;
   padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .resultYes {

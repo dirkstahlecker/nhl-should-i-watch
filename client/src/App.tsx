@@ -606,7 +606,7 @@ class App extends React.Component<AppProps>
     return <div className="columnSection metricsWrapper">
       <div className="grid-container">
         <div className="metricHeader metricsHeader">Metrics:</div>
-        <div className="englishHeader">Return YES if...</div>
+        <div className="englishHeader">The game is worth watching IF...</div>
 
         <div className="losingMargin">
           {this.renderNumberMetric("marginInp", 
@@ -616,7 +616,7 @@ class App extends React.Component<AppProps>
               this.onMarginChange)}
         </div>
         <div className="losingMarginEnglish explanationColumn">
-          Your team loses by no more than {this.machine.margin} goals AND
+          Your team loses by no more than {this.machine.margin} goal{this.machine.margin === "1" ? "" : "s"} AND
         </div>
 
         <div className="maxWin">
@@ -638,7 +638,7 @@ class App extends React.Component<AppProps>
         <div className="random">
           {this.renderNumberMetric("randomPercent",
             this.machine.percentage,
-            "Random Percentage",
+            "Random Chance",
             "Random chance of returning YES when it would otherwise return NO",
             this.onPercentChange)}
         </div>
@@ -729,6 +729,7 @@ export default App;
 //generate an english sentence explaining the chosen metric and put that at the top of the metrics section
   //"The game is worth watching if your team wins by no more than 3 goals or loses by no less than 1 goal, 
   //plus a 10% random chance of returning yes."
+
 
 
 
