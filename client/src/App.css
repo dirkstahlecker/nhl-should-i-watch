@@ -11,12 +11,16 @@ h3 {
   color: #000;
 }
 
+button.reset-button {
+  background-color: #dcdcdc;
+  color: black
+}
+
 button {
   background-color: #5285de;
   color: white;
   border-radius: 6px;
 }
-
 
 .metricHeader {
   grid-area: metricHeader;

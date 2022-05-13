@@ -11,9 +11,11 @@ export class AppMachine
   public DEFAULT_MARGIN: string = "1";
   public DEFAULT_PERCENTAGE = "10";
   public DEFAULT_WIN_DIFF = "3"
+  public DEFAULT_HAT_TRICK = false;
 
   @observable public error: any = null;
   @observable public worthWatching: boolean | null = null;
+  @observable public inProgress: boolean = false;
   @observable public selectedTeam: number = teams.BRUINS;
   @observable public margin: string | null = this.DEFAULT_MARGIN;
   @observable public percentage: string | null = this.DEFAULT_PERCENTAGE;
@@ -184,7 +186,7 @@ class App extends React.Component<AppProps>
         initialSelectedTeam = teams.STARS;
         break;
       case "OR":
-        initialSelectedTeam = teams.CANUCKS;
+        initialSelectedTeam = teams.KRAKEN;
         break;
       case "PA":
         initialSelectedTeam = teams.PENGUINS; //TODO
@@ -214,7 +216,7 @@ class App extends React.Component<AppProps>
         initialSelectedTeam = teams.CAPITALS;
         break;
       case "WA":
-        initialSelectedTeam = teams.CANUCKS;
+        initialSelectedTeam = teams.KRAKEN;
         break;
       case "WV":
         initialSelectedTeam = teams.PENGUINS;
@@ -295,6 +297,16 @@ class App extends React.Component<AppProps>
       this.machine.maxWinDifferential = this.machine.DEFAULT_WIN_DIFF;
     }
 
+    const hatTrickCookie = Cookies.get("hatTrick");
+    if (hatTrickCookie !== undefined)
+    {
+      this.machine.hatTrickHome = hatTrickCookie === "true" ? true : false;
+    }
+    else
+    {
+      this.machine.hatTrickHome = this.machine.DEFAULT_HAT_TRICK;
+    }
+
     //default to today's date
     let today: Date | string = new Date();
     let dd = today.getDate();
@@ -365,6 +377,7 @@ class App extends React.Component<AppProps>
     runInAction(() => {
       this.machine.error = response.error;
       this.machine.worthWatching = response.worthWatching;
+      this.machine.inProgress = response.inProgress;
     });    
   }
 
@@ -483,8 +496,10 @@ class App extends React.Component<AppProps>
   @action
   onHatTrickHomeChange = (e: React.FormEvent<HTMLInputElement>) => {
     this.machine.hatTrickHome = e.currentTarget.checked;
+    Cookies.set("hatTrick", e.currentTarget.checked ? "true" : "false");
   }
 
+  //not used currently
   @action
   onHatTrickAwayChange = (e: React.FormEvent<HTMLInputElement>) => {
     this.machine.hatTrickAway = e.currentTarget.checked;
@@ -569,25 +584,44 @@ class App extends React.Component<AppProps>
 
   private renderHatTrickMetric(): JSX.Element
   {
-    return <div className="metricRow">
-      Hat Trick:
-      <label>Home Team:</label>
-      &nbsp;
+    return <>
       <input 
         type="checkbox" 
         id={"hatTrickMetric_home"} 
         checked={this.machine.hatTrickHome} 
         onChange={this.onHatTrickHomeChange}
       />
-      <label>Away Team:</label>
-      &nbsp;
-      <input 
-        type="checkbox" 
-        id={"hatTrickMetric_home"} 
-        checked={this.machine.hatTrickAway} 
-        onChange={this.onHatTrickAwayChange}
-      />
-    </div>;
+
+      <label htmlFor={"hat-trick-tooltip"}>
+        Hat Trick&nbsp;
+        <span data-tip data-for={"hat-trick-tooltip"}>
+          &#9432;
+        </span>
+        <ReactTooltip id={"hat-trick-tooltip"} place="top" effect="solid">
+          {"Return YES if a player on your team scores a hat trick"}
+        </ReactTooltip>
+      </label>
+    </>
+
+    // return <div className="metricRow">
+    //   Hat Trick:
+    //   <label>Home Team:</label>
+    //   &nbsp;
+    //   <input 
+    //     type="checkbox" 
+    //     id={"hatTrickMetric_home"} 
+    //     checked={this.machine.hatTrickHome} 
+    //     onChange={this.onHatTrickHomeChange}
+    //   />
+    //   <label>Away Team:</label>
+    //   &nbsp;
+    //   <input 
+    //     type="checkbox" 
+    //     id={"hatTrickMetric_home"} 
+    //     checked={this.machine.hatTrickAway} 
+    //     onChange={this.onHatTrickAwayChange}
+    //   />
+    // </div>;
   }
 
   private renderFooter(): JSX.Element
@@ -612,7 +646,7 @@ class App extends React.Component<AppProps>
           {this.renderNumberMetric("marginInp", 
               this.machine.margin,
               "Losing Goal Margin",
-              "Number of goals your team can lose by and still return YES", 
+              "Max number of goals your team can lose by and still return YES", 
               this.onMarginChange)}
         </div>
         <div className="losingMarginEnglish explanationColumn">
@@ -623,7 +657,7 @@ class App extends React.Component<AppProps>
           {this.renderNumberMetric("maxWinDifferential", 
           this.machine.maxWinDifferential, 
           "Winning Goal Margin",
-          "Number of goals your team can win by and still return YES",
+          "Max number of goals your team can win by and still return YES",
           this.onMaxWinChange)}
         </div>
         <div className="maxWinEnglish explanationColumn">
@@ -649,19 +683,44 @@ class App extends React.Component<AppProps>
           }
         </div>
       </div>
-      
-      <button onClick={() => this.resetDefaultMetrics()}>Reset to defaults</button>
+
+      {this.renderAdditionalMetrics()}
+    
+      <br/>
+      <button className="reset-button" onClick={() => this.resetDefaultMetrics()}>Reset to defaults</button>
     </div>;
+  }
+
+  private renderAdditionalMetrics(): JSX.Element
+  {
+    return <>
+      <hr/>
+      <div className="grid-container">
+        <div className="metricHeader metricsHeader">Additional Options:</div>
+        <div className="englishHeader"></div>
+
+        <div className="hatTrick">
+          {this.renderHatTrickMetric()}
+        </div>
+        <div className="hatTrickEnglish explanationColumn">
+          Your team scores a hat trick
+        </div>
+      </div>
+    </>;
   }
 
   private renderResults(): JSX.Element
   {
     return <div className="columnSection resultsArea">
       {
-        this.machine.worthWatching != null && this.machine.error == null &&
-        <div className={this.machine.worthWatching ? "resultYes" : "resultNo"}>
-          {this.machine.worthWatching ? "YES" : "NO"}
-        </div>
+        this.machine.worthWatching != null && this.machine.error == null && //TODO: style the in progress indicator
+        <span>
+          {this.machine.inProgress ? "(In Progress) " : ""}
+          <div className={this.machine.worthWatching ? "resultYes" : "resultNo"}>
+            {this.machine.worthWatching ? "YES" : "NO"}
+          </div>
+        </span>
+
       }
       {
         this.machine.error != null &&
@@ -680,7 +739,7 @@ class App extends React.Component<AppProps>
   {
     return <div className="headerSection">
       <div><h1>Should I Watch?</h1></div>
-      <div><h3>Quickly find out if a recorded NHL game is worth watching</h3></div>
+      <div><h3>Quickly find out if a recorded NHL game is worth watching in full</h3></div>
     </div>
   }
 
@@ -720,21 +779,17 @@ class App extends React.Component<AppProps>
 export default App;
 
 
-//implement check for games in progress (?)
 //does everything work with 0? 
 //error handling for invalid number / negative numbers
 //try on mobile
 //client validation of invalid numbers - just don't allow them to be typed in
 //fix styling in firefox
-//generate an english sentence explaining the chosen metric and put that at the top of the metrics section
-  //"The game is worth watching if your team wins by no more than 3 goals or loses by no less than 1 goal, 
-  //plus a 10% random chance of returning yes."
-
 
 
 
 /*
 Metric ideas:
+  -exlude empty netters
   -overtime (if losing margin is 0)
   -first career goal (your team / either team)
   -fight (player / anyone)

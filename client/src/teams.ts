@@ -30,5 +30,6 @@ export const teams = {
   WILD: 30,
   JETS: 52,
   COYOTES: 53,
-  KNIGHTS: 54
+  KNIGHTS: 54,
+  KRAKEN: 55
 }

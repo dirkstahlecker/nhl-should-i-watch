@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-export type ResultObj = {worthWatching: boolean, error: string | null};
+export type ResultObj = {worthWatching: boolean, error: string | null, inProgress: boolean};
 
 
 export class Metric
@@ -242,6 +242,8 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     const gameDataRaw = await fetch(url);
     const gameData = await gameDataRaw.json();
 
+    let inProgress: boolean = false;
+
     let gameIdStr;
     try
     {
@@ -249,13 +251,22 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     }
     catch (err)
     {
-      return {worthWatching: false, error : "Cannot locate game - make sure your team played on this date."};
+      return {worthWatching: false, 
+        error: "Cannot locate game - make sure your team played on this date.",
+        inProgress
+      };
     }
 
-    if (gameData.dates[0].games[0].status.detailedState !== "Final")
+    // if (gameData.dates[0].games[0].status.detailedState !== "Final")
+    // {
+    //   return {worthWatching: false, error: "This game has not been completed - please check back later."};
+    // }
+
+    if (gameData.dates[0].games[0].status.detailedState === "In Progress")
     {
-      return {worthWatching: false, error: "This game has not been completed - please check back later."};
+      inProgress = true;
     }
+
 
     const boxScoreUrl = "https://statsapi.web.nhl.com/api/v1/game/" + gameIdStr + "/boxscore";
 
@@ -264,7 +275,7 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
 
     if (gameResults == null || gameResults === {})
     {
-      return {worthWatching: false, error: "Cannot retrieve game results."};
+      return {worthWatching: false, error: "Cannot retrieve game results.", inProgress};
     }
 
     const homeTeam = gameResults.teams.home;
@@ -290,7 +301,7 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     }
     else
     {
-      return {worthWatching: false, error: "Cannot locate team"};
+      return {worthWatching: false, error: "Cannot locate team", inProgress};
     }
 
     // console.log("your team score: " + yourTeamScore);
@@ -305,11 +316,11 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
       worthWatching = worthWatching.applyHatTrickMetric(hatTrickHome, hatTrickAway, homeHatTricks, awayHatTricks);
     }
 
-    return {worthWatching: worthWatching.worthWatching, error: null};
+    return {worthWatching: worthWatching.worthWatching, error: null, inProgress};
   }
   catch (err)
   {
     // console.error(err);
-    return {worthWatching: false, error: "Failed to fetch data"};
+    return {worthWatching: false, error: "Failed to fetch data", inProgress: false};
   }
 }
