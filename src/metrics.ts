@@ -92,16 +92,17 @@ export class Metric
     *  -Someone on your team gets a hat trick (if onlyYourTeam = true)
     *  -Someone on either team gets a hat trick (if onlyYourTeam = false)
     */
-  public applyHatTrickMetric(home: boolean, away: boolean, homeHatTrick: boolean, awayHatTrick: boolean): Metric
+  public applyHatTrickMetric(yourTeamHatTrick_inp: boolean, opponentHatTrick_inp: boolean,
+    yourTeamHadHatTrick: boolean, opponentHadHatTrick: boolean): Metric
   {
     let result: boolean = this.worthWatching;
-    if (home)
+    if (yourTeamHatTrick_inp && yourTeamHadHatTrick)
     {
-      result = result || homeHatTrick;
+      result = result || true;
     }
-    if (away)
+    if (opponentHatTrick_inp && opponentHadHatTrick)
     {
-      result = result || awayHatTrick;
+      result = result || true;
     }
 
     console.log(`hat trick metric: ${result}`);
@@ -146,7 +147,7 @@ function getHatTricks(team: any)
       {
         if (skaterStats.goals >= 3)
         {
-          console.log("Hat trick")
+          console.log("Hat trick located")
           return true;
         }
       }
@@ -174,7 +175,7 @@ function getGoalieGoal(homeInfo: any, awayInfo: any): boolean
         {
           if (goalieStats.goals > 0)
           {
-            console.log("Goalie Goal")
+            console.log("Goalie goal located")
             return true;
           }
         }
@@ -231,9 +232,9 @@ function getGoalieGoal(homeInfo: any, awayInfo: any): boolean
 // }
 
 // return json
-export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargin: number,
-  randomPercent: number, maxWinDifferential: number, hatTrickHome: boolean, 
-  hatTrickAway: boolean): Promise<ResultObj>
+export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargin_inp: number,
+  randomPercent_inp: number, maxWinDifferential_inp: number, yourTeamHatTrick_inp: boolean, 
+  opponentHatTrick_inp: boolean): Promise<ResultObj>
 {
   try
   {
@@ -281,21 +282,22 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     const homeTeam = gameResults.teams.home;
     const awayTeam = gameResults.teams.away;
 
-    const homeHatTricks = getHatTricks(homeTeam);
-    const awayHatTricks = getHatTricks(awayTeam);
-
     const homeScore = homeTeam.teamStats.teamSkaterStats.goals;
     const awayScore = awayTeam.teamStats.teamSkaterStats.goals;
+
+    let yourTeamIsHome: boolean | undefined;
 
     let yourTeamScore;
     let opponentScore;
     if (homeTeam.team.id === YOUR_TEAM_ID)
     {
+      yourTeamIsHome = true;
       yourTeamScore = homeScore
       opponentScore = awayScore
     }
     else if (awayTeam.team.id === YOUR_TEAM_ID)
     {
+      yourTeamIsHome = false;
       yourTeamScore = awayScore
       opponentScore = homeScore
     }
@@ -304,16 +306,22 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
       return {worthWatching: false, error: "Cannot locate team", inProgress};
     }
 
+    const homeHatTricks = getHatTricks(homeTeam);
+    const awayHatTricks = getHatTricks(awayTeam);
+    const yourTeamHadHatTrick = yourTeamIsHome ? homeHatTricks : awayHatTricks;
+    const opponentHadHatTrick = yourTeamIsHome ? awayHatTricks : homeHatTricks;
+
     // console.log("your team score: " + yourTeamScore);
     // console.log("opponent team score: " + opponentScore);
 
     let worthWatching: Metric = new Metric(false, yourTeamScore, opponentScore)
-      .applyBasicScoreMetric(losingMargin, maxWinDifferential)
-      .applyRandomPercentageMetric(randomPercent);
+      .applyBasicScoreMetric(losingMargin_inp, maxWinDifferential_inp)
+      .applyRandomPercentageMetric(randomPercent_inp);
 
-    if (hatTrickHome || hatTrickAway)
+    if (yourTeamHatTrick_inp || opponentHatTrick_inp)
     {
-      worthWatching = worthWatching.applyHatTrickMetric(hatTrickHome, hatTrickAway, homeHatTricks, awayHatTricks);
+      worthWatching = worthWatching.applyHatTrickMetric(yourTeamHatTrick_inp, opponentHatTrick_inp, 
+        yourTeamHadHatTrick, opponentHadHatTrick);
     }
 
     return {worthWatching: worthWatching.worthWatching, error: null, inProgress};
@@ -324,3 +332,5 @@ export async function getResults(YOUR_TEAM_ID: number, date: string, losingMargi
     return {worthWatching: false, error: "Failed to fetch data", inProgress: false};
   }
 }
+
+//TODO: wild 5-12-22 is broken

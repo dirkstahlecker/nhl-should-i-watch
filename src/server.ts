@@ -26,8 +26,8 @@ const hash = (input: string): number => {
     differential,
     randomPercent,
     maxWinDifferential,
-    hatTrickHome,
-    hatTrickAway
+    yourTeamHatTrick,
+    opponentHatTrick
   }
 */
 app.post('/api/worthWatching/:teamId/:date', async (req, res) => {
@@ -42,11 +42,11 @@ app.post('/api/worthWatching/:teamId/:date', async (req, res) => {
   const losingMargin = req.body.differential;
   const randomPercent = req.body.randomPercent;
   const maxWinDifferential = req.body.maxWinDifferential;
-  const hatTrickHome: boolean = req.body.hatTrickHome;
-  const hatTrickAway: boolean = req.body.hatTrickAway;
+  const yourTeamHatTrick: boolean = req.body.yourTeamHatTrick;
+  const opponentHatTrick: boolean = req.body.opponentHatTrick;
 
   const result = await getResults(YOUR_TEAM_ID, date, losingMargin, randomPercent, maxWinDifferential,
-    hatTrickHome, hatTrickAway);
+    yourTeamHatTrick, opponentHatTrick);
 
   res.json(result);
 })

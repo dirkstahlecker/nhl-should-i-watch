@@ -35,8 +35,8 @@ const hash = (input) => {
     differential,
     randomPercent,
     maxWinDifferential,
-    hatTrickHome,
-    hatTrickAway
+    yourTeamHatTrick,
+    opponentHatTrick
   }
 */
 app.post('/api/worthWatching/:teamId/:date', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -48,9 +48,9 @@ app.post('/api/worthWatching/:teamId/:date', (req, res) => __awaiter(void 0, voi
     const losingMargin = req.body.differential;
     const randomPercent = req.body.randomPercent;
     const maxWinDifferential = req.body.maxWinDifferential;
-    const hatTrickHome = req.body.hatTrickHome;
-    const hatTrickAway = req.body.hatTrickAway;
-    const result = yield metrics_1.getResults(YOUR_TEAM_ID, date, losingMargin, randomPercent, maxWinDifferential, hatTrickHome, hatTrickAway);
+    const yourTeamHatTrick = req.body.yourTeamHatTrick;
+    const opponentHatTrick = req.body.opponentHatTrick;
+    const result = yield metrics_1.getResults(YOUR_TEAM_ID, date, losingMargin, randomPercent, maxWinDifferential, yourTeamHatTrick, opponentHatTrick);
     res.json(result);
 }));
 // log the IP address of each user on page load so we can estimate the unique visitors

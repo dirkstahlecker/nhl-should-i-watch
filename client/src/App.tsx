@@ -21,7 +21,7 @@ export class AppMachine
   @observable public percentage: string | null = this.DEFAULT_PERCENTAGE;
   @observable public maxWinDifferential: string | null = this.DEFAULT_WIN_DIFF;
   @observable public date: string = "";
-  @observable public hatTrickHome: boolean = false;
+  @observable public yourTeamHatTrick: boolean = false;
   @observable public hatTrickAway: boolean = false;
 
   LOCAL = false;
@@ -300,11 +300,11 @@ class App extends React.Component<AppProps>
     const hatTrickCookie = Cookies.get("hatTrick");
     if (hatTrickCookie !== undefined)
     {
-      this.machine.hatTrickHome = hatTrickCookie === "true" ? true : false;
+      this.machine.yourTeamHatTrick = hatTrickCookie === "true" ? true : false;
     }
     else
     {
-      this.machine.hatTrickHome = this.machine.DEFAULT_HAT_TRICK;
+      this.machine.yourTeamHatTrick = this.machine.DEFAULT_HAT_TRICK;
     }
 
     //default to today's date
@@ -361,12 +361,12 @@ class App extends React.Component<AppProps>
     const differential = this.machine.margin;
     const randomPercent = this.machine.percentage;
     const maxWinDifferential = this.machine.maxWinDifferential;
-    const hatTrickHome = this.machine.hatTrickHome;
+    const hatTrickHome = this.machine.yourTeamHatTrick;
     const hatTrickAway = this.machine.hatTrickAway;
 
     const response = await this.postRequest(url, 
-      {differential: differential, randomPercent: randomPercent, maxWinDifferential: maxWinDifferential,
-      hatTrickHome: hatTrickHome, hatTrickAway: hatTrickAway});
+      {differential: differential, randomPercent: randomPercent, maxWinDifferential: maxWinDifferential, 
+        yourTeamHatTrick: hatTrickHome, opponentHatTrick: hatTrickAway});
 
     if (response.error)
     {
@@ -467,6 +467,13 @@ class App extends React.Component<AppProps>
   }
 
   @action
+  private setHatTrick(value: boolean): void
+  {
+    this.machine.yourTeamHatTrick = value;
+    Cookies.set("hatTrick", value ? "true" : "false");
+  }
+
+  @action
   onMaxWinChange = (e: React.FormEvent<HTMLInputElement>) => {
     let maxWinDiff: string | null = e.currentTarget.value;
 
@@ -494,9 +501,8 @@ class App extends React.Component<AppProps>
   }
 
   @action
-  onHatTrickHomeChange = (e: React.FormEvent<HTMLInputElement>) => {
-    this.machine.hatTrickHome = e.currentTarget.checked;
-    Cookies.set("hatTrick", e.currentTarget.checked ? "true" : "false");
+  onYourTeamHatTrickChange = (e: React.FormEvent<HTMLInputElement>) => {
+    this.setHatTrick(e.currentTarget.checked);
   }
 
   //not used currently
@@ -511,6 +517,7 @@ class App extends React.Component<AppProps>
     this.setMargin(this.machine.DEFAULT_MARGIN);
     this.setPercentage(this.machine.DEFAULT_PERCENTAGE);
     this.setMaxWin(this.machine.DEFAULT_WIN_DIFF);
+    this.setHatTrick(this.machine.DEFAULT_HAT_TRICK);
   }
 
   private renderTeamDropdown(): JSX.Element
@@ -542,6 +549,7 @@ class App extends React.Component<AppProps>
         <option value={teams.FLYERS}>Philadelphia Flyers</option>
         <option value={teams.PENGUINS}>Pittsburgh Penguins</option>
         <option value={teams.SHARKS}>San Jose Sharks</option>
+        <option value={teams.KRAKEN}>Seattle Kraken</option>
         <option value={teams.BLUES}>St. Louis Blues</option>
         <option value={teams.LIGHTNING}>Tampa Bay Lightning</option>
         <option value={teams.LEAFS}>Toronto Maple Leafs</option>
@@ -588,8 +596,8 @@ class App extends React.Component<AppProps>
       <input 
         type="checkbox" 
         id={"hatTrickMetric_home"} 
-        checked={this.machine.hatTrickHome} 
-        onChange={this.onHatTrickHomeChange}
+        checked={this.machine.yourTeamHatTrick} 
+        onChange={this.onYourTeamHatTrickChange}
       />
 
       <label htmlFor={"hat-trick-tooltip"}>
